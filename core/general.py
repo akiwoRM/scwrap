@@ -5,5 +5,10 @@ except:
     unicode = str
 
 
-class Node(unicode):
+class Attribute(unicode):
     pass
+
+
+class Node(unicode):
+    def __getattr__(self, attr):
+        return Attribute(self, attr)

@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+from maya import cmds
+
 try:
     import unicode
 except:
@@ -14,6 +16,9 @@ class Attribute(unicode):
             cls._node = args[0]
             cls._attr = args[1]
         return super(Attribute, cls).__new__(cls, cls._node+"."+cls._attr)
+    
+    def get(self, **kwds):
+        return cmds.getAttr(self, **kwds)
 
 
 class Node(unicode):

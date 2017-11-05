@@ -20,6 +20,9 @@ class Attribute(unicode):
     def get(self, **kwds):
         return cmds.getAttr(self, **kwds)
 
+    def set(self, *val, **kwds):
+        return cmds.setAttr(self, *val, **kwds)
+
 
 class Node(unicode):
     def __getattr__(self, attr):

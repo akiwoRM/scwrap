@@ -15,7 +15,9 @@ class Attribute(unicode):
         if len(args) == 2:
             cls._node = args[0]
             cls._attr = args[1]
-        return super(Attribute, cls).__new__(cls, cls._node+"."+cls._attr)
+        elif len(args) == 1:
+            cls._node, cls._attr = args[0].split('.')
+        return super(Attribute, cls).__new__(cls, cls._node + "." + cls._attr)
     
     def get(self, **kwds):
         return cmds.getAttr(self, **kwds)

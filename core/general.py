@@ -23,9 +23,15 @@ class Attribute(unicode):
         return cmds.getAttr(self, **kwds)
 
     def set(self, *val, **kwds):
-        return cmds.setAttr(self, *val, **kwds)
-
+        cmds.setAttr(self, *val, **kwds)
+    
 
 class Node(unicode):
     def __getattr__(self, attr):
         return Attribute(self, attr)
+
+    def __setattr__(self, attr, val):
+        try:
+            cmds.setAttr(self + "." + attr, val)
+        except:
+            cmds.setAttr(self + "." + attr, *val)

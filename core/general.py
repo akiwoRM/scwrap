@@ -18,6 +18,9 @@ class Attribute(unicode):
         elif len(args) == 1:
             cls._node, cls._attr = args[0].split('.')
         return super(Attribute, cls).__new__(cls, cls._node + "." + cls._attr)
+
+    def __getitem__(self, idx):
+        return Attribute(self._node, self._attr + “[{0}]”.format(idx))
     
     def get(self, **kwds):
         return cmds.getAttr(self, **kwds)

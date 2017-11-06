@@ -38,3 +38,6 @@ class Node(unicode):
             cmds.setAttr(self + "." + attr, val)
         except:
             cmds.setAttr(self + "." + attr, *val)
+
+    def attr(self, attr):
+        return Attribute(self, attr)

@@ -21,7 +21,33 @@ class Attribute(unicode):
 
     def __getitem__(self, idx):
         return Attribute(self._node, self._attr + “[{0}]”.format(idx))
+
+    def __rshift__(self, other):
+        cmds.connectAttr(self, other, f=1)
+
+    def __lshift__(self, other):
+        cmds.connectAttr(other, self, f=1)
+
+    def _connections(self, *args, **kwds):
+        ret = cmds.listConnections(*args, **kwds)
+        return list() if ret is None else ret
+
+    def inputs(self, **kwds):
+        [del kwds[arg] for arg in [‘s’, ‘d’, ‘source’, ‘destination’] if arg in kwds.keys()]
+        kwds[‘s’] = 1
+        kwds[‘d’] = 0
+        return [Node(node) for node in self._conection(self, **kwds)]
     
+    def outputs(self, **kwds):
+        [del kwds[arg] for arg in [‘s’, ‘d’, ‘source’, ‘destination’] if arg in kwds.keys()]
+        kwds[‘s’] = 0
+        kwds[‘d’] = 1
+        return [Node(node) for node in self._conection(self, **kwds)]
+
+    def history(self, **kwds):
+        ret = cmds.listHistory(self, **kwds)
+        return list() if ret is None else [Node(node) for node in ret]
+
     def get(self, **kwds):
         return cmds.getAttr(self, **kwds)
 

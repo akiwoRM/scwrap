@@ -33,16 +33,20 @@ class Attribute(unicode):
         return list() if ret is None else ret
 
     def inputs(self, **kwds):
-        [del kwds[arg] for arg in ['s', 'd', 'source', 'destination'] if arg in kwds.keys()]
+        for arg in ['s', 'd', 'source', 'destination']:
+            if arg in kwds.keys():
+                del kwds[arg]
         kwds['s'] = 1
         kwds['d'] = 0
-        return [Node(node) for node in self._conection(self, **kwds)]
+        return [Node(node) for node in self._connections(self, **kwds)]
     
     def outputs(self, **kwds):
-        [del kwds[arg] for arg in ['s', 'd', 'source', 'destination'] if arg in kwds.keys()]
+        for arg in ['s', 'd', 'source', 'destination']:
+            if arg in kwds.keys():
+                del kwds[arg]
         kwds['s'] = 0
         kwds['d'] = 1
-        return [Node(node) for node in self._conection(self, **kwds)]
+        return [Node(node) for node in self._connections(self, **kwds)]
 
     def history(self, **kwds):
         ret = cmds.listHistory(self, **kwds)

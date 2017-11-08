@@ -16,4 +16,6 @@ sc.Node(‘pSphere1’).attr(‘rx’)
 sc.Node('pSphere1').tx >> sc.Node(‘pSphere1’).ty
 sc.Node(‘pSphere1’).ty.inputs()
 sc.Node(‘pSphere1’).tx.outputs()
+
+sc.Node('pSphere1').tx // sc.Node(‘pSphere1’).ty
 ```

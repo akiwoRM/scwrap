@@ -20,7 +20,7 @@ class Attribute(unicode):
         return super(Attribute, cls).__new__(cls, cls._node + "." + cls._attr)
 
     def __getitem__(self, idx):
-        return Attribute(self._node, self._attr + “[{0}]”.format(idx))
+        return Attribute(self._node, self._attr + '[{0}]'.format(idx))
 
     def __rshift__(self, other):
         cmds.connectAttr(self, other, f=1)
@@ -33,15 +33,15 @@ class Attribute(unicode):
         return list() if ret is None else ret
 
     def inputs(self, **kwds):
-        [del kwds[arg] for arg in [‘s’, ‘d’, ‘source’, ‘destination’] if arg in kwds.keys()]
-        kwds[‘s’] = 1
-        kwds[‘d’] = 0
+        [del kwds[arg] for arg in ['s', 'd', 'source', 'destination'] if arg in kwds.keys()]
+        kwds['s'] = 1
+        kwds['d'] = 0
         return [Node(node) for node in self._conection(self, **kwds)]
     
     def outputs(self, **kwds):
-        [del kwds[arg] for arg in [‘s’, ‘d’, ‘source’, ‘destination’] if arg in kwds.keys()]
-        kwds[‘s’] = 0
-        kwds[‘d’] = 1
+        [del kwds[arg] for arg in ['s', 'd', 'source', 'destination'] if arg in kwds.keys()]
+        kwds['s'] = 0
+        kwds['d'] = 1
         return [Node(node) for node in self._conection(self, **kwds)]
 
     def history(self, **kwds):

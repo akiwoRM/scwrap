@@ -76,3 +76,22 @@ class Node(Base):
 
     def attr(self, attr):
         return Attribute(self, attr)
+
+    def type(self, **kwds):
+        return cmds.nodeType(self, **kwds)
+
+    def rename(self, name):
+        return Node(cmds.rename(self, name))
+
+    def parent(self, *args, **kwds):
+        cmds.parent(self, *args, **kwds)
+
+    def _relatives(self, *args, **kwds):
+        ret = cmds.listRelatives(*args, **kwds)
+        return list() if ret is None else ret
+
+    def getParent(self):
+        return Node(self._relatives(self, p=1))
+
+    def getShape(self):
+        return [Node(node) for in self._relatives(self, s=1)]

@@ -94,4 +94,4 @@ class Node(Base):
         return Node(self._relatives(self, p=1))
 
     def getShape(self):
-        return [Node(node) for in self._relatives(self, s=1)]
+        return [Node(node) for node in self._relatives(self, s=1)]

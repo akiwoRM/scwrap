@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from maya import cmds
+import maya.api.OpenMaya as om
 
 try:
     import unicode
@@ -13,20 +14,40 @@ class Base(unicode):
         return list() if ret is None else ret
 
     def inputs(self, **kwds):
+        ks = kwds.keys()
         for arg in ['s', 'd', 'source', 'destination']:
-            if arg in kwds.keys():
+            if arg in ks:
                 del kwds[arg]
+
+        Cls = Node
+        for arg in ['p', 'plug']:
+            if arg in ks:
+                if ks[arg]:
+                    Cls = Attribute
+                    break
+
         kwds['s'] = 1
         kwds['d'] = 0
-        return [Node(node) for node in self._connections(self, **kwds)]
+
+        return [Cls(node) for node in self._connections(self, **kwds)]
     
     def outputs(self, **kwds):
+        ks = kwds.keys()
         for arg in ['s', 'd', 'source', 'destination']:
-            if arg in kwds.keys():
+            if arg in ks:
                 del kwds[arg]
+
+        Cls = Node
+        for arg in ['p', 'plug']:
+            if arg in ks:
+                if ks[arg]:
+                    Cls = Attribute
+                    break
+
         kwds['s'] = 0
         kwds['d'] = 1
-        return [Node(node) for node in self._connections(self, **kwds)]
+
+        return [Cls(node) for node in self._connections(self, **kwds)]
 
     def history(self, **kwds):
         ret = cmds.listHistory(self, **kwds)
@@ -77,12 +98,21 @@ class Node(Base):
     def attr(self, attr):
         return Attribute(self, attr)
 
+    def listAttr(self, **kwds):
+        return [Attribute(self, attr) for attr in cmds.listAttr(self, **kwds)]
+
+    def addAttr(self, attr, **kwds):
+        cmds.addAttr(self, ln=attr, **kwds)
+
     def type(self, **kwds):
         return cmds.nodeType(self, **kwds)
 
     def rename(self, name):
         return Node(cmds.rename(self, name))
 
+
+
+class DAGNode(Node):
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
 
@@ -95,3 +125,8 @@ class Node(Base):
 
     def getShape(self):
         return [Node(node) for node in self._relatives(self, s=1)]
+
+    def getDagPath(self):
+        sels = om.MSelectionList()
+        sels.add(self)
+        return sels.getDagPath(0)

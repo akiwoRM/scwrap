@@ -128,6 +128,7 @@ class DAGNode(Node):
     def getDagPath(self):
         sels = om.MSelectionList()
         sels.add(self)
+        return sels.getDagPath(0)
 
 
 def wrap(node):
@@ -142,4 +143,3 @@ def wrap(node):
     except:
         pass
     return Node(node)
-        return sels.getDagPath(0)

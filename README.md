@@ -8,8 +8,8 @@ developed by iPhone(almost)
 ```python
 # ex.)
 import scwrap.core as sc
-
-sph = sc.wrap('pSphere1')
+sc.cmds.select('pSphere1')
+sph = sc.ls(sl=1)
 sph.tx.get()
 sph.tx.set(1.0)
 

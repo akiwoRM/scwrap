@@ -2,6 +2,8 @@
 from maya import cmds
 import maya.api.OpenMaya as om
 
+from . import command as cm
+
 try:
     import unicode
 except:
@@ -19,7 +21,7 @@ class Base(unicode):
             if arg in ks:
                 del kwds[arg]
 
-        Cls = wrap
+        Cls = cm.wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
@@ -37,7 +39,7 @@ class Base(unicode):
             if arg in ks:
                 del kwds[arg]
 
-        Cls = wrap
+        Cls = cm.wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:

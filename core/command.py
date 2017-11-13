@@ -2,7 +2,8 @@
 from maya import cmds
 import maya.api.OpenMaya as om
 
-import . general as gen
+from . import general as gen
+
 
 
 def wrap(node):

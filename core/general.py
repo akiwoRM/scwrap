@@ -2,8 +2,6 @@
 from maya import cmds
 import maya.api.OpenMaya as om
 
-from . import command as cm
-
 try:
     import unicode
 except:
@@ -113,7 +111,6 @@ class Node(Base):
         return Node(cmds.rename(self, name))
 
 
-
 class DAGNode(Node):
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
@@ -131,4 +128,18 @@ class DAGNode(Node):
     def getDagPath(self):
         sels = om.MSelectionList()
         sels.add(self)
+
+
+def wrap(node):
+    node_sep = node.split('.')
+    if len(node_sep) == 2:
+        return Attribute(*node_sep)
+    sels = om.MSelectionList()
+    sels.add(node)
+    try:
+        sels.getDagPath(0)
+        return DAGNode(node)
+    except:
+        pass
+    return Node(node)
         return sels.getDagPath(0)

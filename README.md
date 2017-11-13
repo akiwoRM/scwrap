@@ -9,7 +9,7 @@ developed by iPhone(almost)
 # ex.)
 import scwrap.core as sc
 
-sph = sc.Wrap('pSphere1')
+sph = sc.wrap('pSphere1')
 sph.tx.get()
 sph.tx.set(1.0)
 

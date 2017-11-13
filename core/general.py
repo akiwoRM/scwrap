@@ -19,7 +19,7 @@ class Base(unicode):
             if arg in ks:
                 del kwds[arg]
 
-        Cls = Node
+        Cls = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
@@ -37,7 +37,7 @@ class Base(unicode):
             if arg in ks:
                 del kwds[arg]
 
-        Cls = Node
+        Cls = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:

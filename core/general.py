@@ -9,11 +9,17 @@ except:
 
 
 class Base(unicode):
-    def _connections(self, *args, **kwds):
+    """
+    Base class for Node class and Attribute class
+    """
+    def connections(self, *args, **kwds):
         ret = cmds.listConnections(*args, **kwds)
         return list() if ret is None else ret
 
     def inputs(self, **kwds):
+        """
+        override listConnection command fixed only source argument setting
+        """
         ks = kwds.keys()
         for arg in ['s', 'd', 'source', 'destination']:
             if arg in ks:
@@ -29,7 +35,7 @@ class Base(unicode):
         kwds['s'] = 1
         kwds['d'] = 0
 
-        return [Cls(node) for node in self._connections(self, **kwds)]
+        return [Cls(node) for node in self.connections(self, **kwds)]
     
     def outputs(self, **kwds):
         ks = kwds.keys()
@@ -47,7 +53,7 @@ class Base(unicode):
         kwds['s'] = 0
         kwds['d'] = 1
 
-        return [Cls(node) for node in self._connections(self, **kwds)]
+        return [Cls(node) for node in self.connections(self, **kwds)]
 
     def history(self, **kwds):
         ret = cmds.listHistory(self, **kwds)

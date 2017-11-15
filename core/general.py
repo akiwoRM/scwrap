@@ -138,7 +138,7 @@ class DAGNode(Node):
 
 
 class Transform(DAGNode):
-    def getTranslate(self, space='world'):
+    def getTranslation(self, space='world'):
         spaceDict = {'world': 'ws', 'object': 'os'}
         opt = {'q': 1, 't': 1}
         opt[spaceDict[space]] = 1

@@ -21,11 +21,11 @@ class Base(unicode):
         override listConnection command fixed only source argument setting
         """
         ks = kwds.keys()
-        for arg in ['s', 'd', 'source', 'destination']:
+        for arg in ['source', 'destination']:
             if arg in ks:
                 del kwds[arg]
 
-        Cls = cm.wrap
+        Cls = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
@@ -39,11 +39,11 @@ class Base(unicode):
     
     def outputs(self, **kwds):
         ks = kwds.keys()
-        for arg in ['s', 'd', 'source', 'destination']:
+        for arg in ['source', 'destination']:
             if arg in ks:
                 del kwds[arg]
 
-        Cls = cm.wrap
+        Cls = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
@@ -126,10 +126,10 @@ class DAGNode(Node):
         return list() if ret is None else ret
 
     def getParent(self):
-        return Node(self._relatives(self, p=1))
+        return DAGNode(self._relatives(self, p=1))
 
     def getShape(self):
-        return [Node(node) for node in self._relatives(self, s=1)]
+        return [DAGNode(node) for node in self._relatives(self, s=1)]
 
     def getDagPath(self):
         sels = om.MSelectionList()
@@ -137,14 +137,21 @@ class DAGNode(Node):
         return sels.getDagPath(0)
 
 
+class Transform(DAGNode):
+    def getTranslate(self, space='world'):
+        spaceDict = {'world': 'ws', 'object': 'os'}
+        opt = {'q': 1, 't': 1}
+        opt[spaceDict[space]] = 1
+        return cmds.xform(self, **opt)
+
+
 def wrap(node):
-    node_sep = node.split('.')
-    if len(node_sep) == 2:
-        return Attribute(*node_sep)
     sels = om.MSelectionList()
     sels.add(node)
     try:
-        sels.getDagPath(0)
+        dag = sels.getDagPath(0)
+        if dag.apiType() == getattr(om.MFn, 'kTransform'):
+            return Transform(node)
         return DAGNode(node)
     except:
         pass

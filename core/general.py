@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from maya import cmds
-import maya.api.OpenMaya as om
+from maya.api import OpenMaya
 
 try:
     import unicode
@@ -132,7 +132,7 @@ class DAGNode(Node):
         return [DAGNode(node) for node in self._relatives(self, s=1)]
 
     def getDagPath(self):
-        sels = om.MSelectionList()
+        sels = OpenMaya.MSelectionList()
         sels.add(self)
         return sels.getDagPath(0)
 
@@ -146,11 +146,11 @@ class Transform(DAGNode):
 
 
 def wrap(node):
-    sels = om.MSelectionList()
+    sels = OpenMaya.MSelectionList()
     sels.add(node)
     try:
         dag = sels.getDagPath(0)
-        if dag.apiType() == getattr(om.MFn, 'kTransform'):
+        if dag.apiType() == getattr(OpenMaya.MFn, 'kTransform'):
             return Transform(node)
         return DAGNode(node)
     except:

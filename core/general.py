@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+from future_builtins import filter
+from future_builtins import map
 from maya import cmds
 from maya.api import OpenMaya
 
@@ -21,9 +23,7 @@ class Base(unicode):
         override listConnection command fixed only source argument setting
         """
         ks = kwds.keys()
-        for arg in ['source', 'destination']:
-            if arg in ks:
-                del kwds[arg]
+        [kwds.pop(arg) for arg in ['s', 'd'] if arg in ks]
 
         Cls = wrap
         for arg in ['p', 'plug']:
@@ -32,16 +32,14 @@ class Base(unicode):
                     Cls = Attribute
                     break
 
-        kwds['s'] = 1
-        kwds['d'] = 0
+        kwds['source'] = 1
+        kwds['destination'] = 0
 
         return [Cls(node) for node in self.connections(self, **kwds)]
     
     def outputs(self, **kwds):
         ks = kwds.keys()
-        for arg in ['source', 'destination']:
-            if arg in ks:
-                del kwds[arg]
+        [kwds.pop(arg) for arg in ['s', 'd'] if arg in ks]
 
         Cls = wrap
         for arg in ['p', 'plug']:
@@ -50,17 +48,20 @@ class Base(unicode):
                     Cls = Attribute
                     break
 
-        kwds['s'] = 0
-        kwds['d'] = 1
+        kwds['source'] = 0
+        kwds['destination'] = 1
 
         return [Cls(node) for node in self.connections(self, **kwds)]
 
     def history(self, **kwds):
         ret = cmds.listHistory(self, **kwds)
-        return list() if ret is None else [Node(node) for node in ret]
+        return list() if ret is None else [wrap(node) for node in ret]
 
 
 class Attribute(Base):
+    """
+    Attribute wrapper class
+    """
     _node = ''
     _attr = ''
 
@@ -92,6 +93,9 @@ class Attribute(Base):
     
 
 class Node(Base):
+    """
+    DependNode wrapper class
+    """
     def __getattr__(self, attr):
         return Attribute(self, attr)
 
@@ -118,6 +122,13 @@ class Node(Base):
 
 
 class DAGNode(Node):
+    """
+    DAGNode wrapper class
+    """
+
+    def __or__(self, other):
+        cmds.parent(other, self)
+
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
 
@@ -139,7 +150,10 @@ class DAGNode(Node):
 
 class Transform(DAGNode):
     def getTranslation(self, space='world'):
-        spaceDict = {'world': 'ws', 'object': 'os'}
+        spaceDict = {
+            'world': 'ws', 
+            'object': 'os'
+        }
         opt = {'q': 1, 't': 1}
         opt[spaceDict[space]] = 1
         return cmds.xform(self, **opt)

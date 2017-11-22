@@ -1,6 +1,4 @@
 # -*- coding:utf-8 -*-
-from future_builtins import filter
-from future_builtins import map
 from maya import cmds
 from maya.api import OpenMaya
 
@@ -11,47 +9,59 @@ except:
 
 
 class Base(unicode):
-    """
-    Base class for Node class and Attribute class
+    """Base class for Node class and Attribute class. This class has common methods like connection.
     """
     def connections(self, *args, **kwds):
         ret = cmds.listConnections(*args, **kwds)
         return list() if ret is None else ret
 
     def inputs(self, **kwds):
-        """
-        override listConnection command fixed only source argument setting
+        """override listConnection command fixed only source argument setting.
+
+        Args:
+            same as listConnections, but ‘source’ option is always on, ‘destination’ is always off
+
+        Returns:
+            list (Node or Attribute)
         """
         ks = kwds.keys()
         [kwds.pop(arg) for arg in ['s', 'd'] if arg in ks]
 
-        Cls = wrap
+        func = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
-                    Cls = Attribute
+                    func = Attribute
                     break
 
         kwds['source'] = 1
         kwds['destination'] = 0
 
-        return [Cls(node) for node in self.connections(self, **kwds)]
+        return [func(node) for node in self.connections(self, **kwds)]
     
     def outputs(self, **kwds):
+        """override listConnection command fixed only destination argument setting.
+
+        Args:
+            same as listConnections, but ‘source’ option is always off, ‘destination’ is always on
+
+        Returns:
+            list (Node or Attribute)
+        """
         ks = kwds.keys()
         [kwds.pop(arg) for arg in ['s', 'd'] if arg in ks]
 
-        Cls = wrap
+        func = wrap
         for arg in ['p', 'plug']:
             if arg in ks:
                 if ks[arg]:
-                    Cls = Attribute
+                    func = Attribute
                     break
 
         kwds['source'] = 0
         kwds['destination'] = 1
 
-        return [Cls(node) for node in self.connections(self, **kwds)]
+        return [func(node) for node in self.connections(self, **kwds)]
 
     def history(self, **kwds):
         ret = cmds.listHistory(self, **kwds)

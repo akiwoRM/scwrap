@@ -10,3 +10,6 @@ def get_opt(kwds, keys, init_val):
         for k in keys:
             val = kwds.get(k, val)
     return val
+
+def get_abc(num):
+    return string.ascii_uppercase[num]

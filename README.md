@@ -10,7 +10,9 @@ developed by iPhone(almost)
 import scwrap.core as sc
 
 sc.cmds.select('pSphere1')
+sc.cmds.select('pCube1', add=1)
 sph = sc.ls(sl=1)[0]
+cube = sc.ls(sl=1)[1]
 sph.tx.get()
 sph.tx.set(1.0)
 
@@ -27,8 +29,15 @@ sph.tx // sph.ty
 
 sph.getShape()[0].getParent()
 
-sph | sc.wrap('pCube1')
+sph | cube
+cube.parent(w=1)
 
 sph.getTranslation(space='world')
+sph.setTranslation(1, 2, 3)
+
+cube.matchTransform(sph)
+
+sph.freeze()
+sph_par = sph.addParentNode(n=sph + '_par')
 
 ```

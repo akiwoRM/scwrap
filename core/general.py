@@ -159,17 +159,105 @@ class DAGNode(Node):
 
 
 class Transform(DAGNode):
+    """Transform class
+    """
+    spaceDict = {
+        'world': 'ws', 
+        'object': 'os'
+    }
+
+    def freeze(self, **kwds):
+        if kwds == {}:
+            kwds = {'apply': 1, 't': 1, 'r': 1, 's': 1}
+        cmds.makeIdentity(self, **kwds)
+        # reset pivot
+        cmds.xform(self, os=1, piv=[0, 0, 0])
+        # delete history
+        cmds.delete(self, ch=1)
+
     def getTranslation(self, space='world'):
-        spaceDict = {
-            'world': 'ws', 
-            'object': 'os'
-        }
         opt = {'q': 1, 't': 1}
-        opt[spaceDict[space]] = 1
+        opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
+        
+    def setTranslation(self, *args, space='world'):
+        opt = dict(self.spaceDict[space] = 1)
+        if len(args) > 1:
+            opt['t'] = args
+        elif len(args) == 1:
+            if isinstance(args[0], list):
+                opt['t'] = args[0]
+        cmds.xform(self, **opt)
+
+    def getRotation(self, space='world'):
+        opt = {'q': 1, 'ro': 1}
+        opt[self.spaceDict[space]] = 1
+        return cmds.xform(self, **opt)
+
+    def setRotation(self, *args, space='world'):
+        opt = dict(self.spaceDict[space] = 1)
+        if len(args) > 1:
+            opt['ro'] = args
+        elif len(args) == 1:
+            if isinstance(args[0], list):
+                opt['ro'] = args[0]
+        cmds.xform(self, **opt)
+
+    def getScale(self, space='world'):
+        opt = {'q': 1, 's': 1}
+        opt[self.spaceDict[space]] = 1
+        return cmds.xform(self, **opt)
+
+    def setScale(self, *args, space='world'):
+        opt = dict(self.spaceDict[space] = 1)
+        if len(args) > 1:
+            opt['s'] = args
+        elif len(args) == 1:
+            if isinstance(args[0], list):
+                opt['s'] = args[0]
+        cmds.xform(self, **opt)
+
+    def matchTransform(self, *arg, attrs=['t', 'r', 's']):
+        attr_io = {
+            't': {
+                'get': lambda x: return x.getTranslation(),
+                'set': lambda x, v: x.setTranslation(*v)}, 
+            'r': {
+                'get': lambda x: return x.getRotation(),
+                'set': lambda x, v: x.setRotation(*v)}, 
+            's': {
+                'get': lambda x: return x.getScale(),
+                'set': lambda x, v: x.setScale(*v)}, 
+        }
+        for other in args:
+            other = wrap(other)
+            for at in attrs:
+                v = attr_io[at]['get'](other)
+                attr_io[at]['set'](self, v)
+
+    def addParentNode(self, n='', nType='transform'):
+        if n == ''
+            n = self + "Par"
+
+        try:
+            par = cmds.createNode(nType, n=n)
+        except:
+            raise TypeError,'Don’t exists nodeType:' + nType
+
+        cmds.parent(self, par, r=1)
+        cur_par = self.getParent()
+        if cur_par:
+            cmds.parent(par, cur_par)
+        else:
+            cmds.parent(par, w=1)
+        cmds.parent(self, par)
+        return par
 
 
 def wrap(node):
+    """wrapper function
+    return appropriate wrapper class as node.
+    """
     sels = OpenMaya.MSelectionList()
     sels.add(node)
     try:

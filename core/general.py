@@ -180,8 +180,8 @@ class Transform(DAGNode):
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
         
-    def setTranslation(self, *args, space='world'):
-        opt = dict(self.spaceDict[space] = 1)
+    def setTranslation(self, args, space='world'):
+        opt = dict(self.spaceDict[space]=1)
         if len(args) > 1:
             opt['t'] = args
         elif len(args) == 1:
@@ -194,8 +194,8 @@ class Transform(DAGNode):
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
 
-    def setRotation(self, *args, space='world'):
-        opt = dict(self.spaceDict[space] = 1)
+    def setRotation(self, args, space='world'):
+        opt = dict(self.spaceDict[space]=1)
         if len(args) > 1:
             opt['ro'] = args
         elif len(args) == 1:
@@ -208,8 +208,8 @@ class Transform(DAGNode):
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
 
-    def setScale(self, *args, space='world'):
-        opt = dict(self.spaceDict[space] = 1)
+    def setScale(self, args, space='world'):
+        opt = dict(self.spaceDict[space]=1)
         if len(args) > 1:
             opt['s'] = args
         elif len(args) == 1:
@@ -217,7 +217,7 @@ class Transform(DAGNode):
                 opt['s'] = args[0]
         cmds.xform(self, **opt)
 
-    def matchTransform(self, *arg, attrs=['t', 'r', 's']):
+    def matchTransform(self, args, attrs=['t', 'r', 's']):
         attr_io = {
             't': {
                 'get': lambda x: return x.getTranslation(),
@@ -236,7 +236,7 @@ class Transform(DAGNode):
                 attr_io[at]['set'](self, v)
 
     def addParentNode(self, n='', nType='transform'):
-        if n == ''
+        if n == '':
             n = self + "Par"
 
         try:

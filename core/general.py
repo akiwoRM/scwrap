@@ -256,7 +256,7 @@ class Transform(DAGNode):
 
 def wrap(node):
     """wrapper function
-    return appropriate wrapper class as node.
+    return appropriate wrapper object from source node.
     """
     sels = OpenMaya.MSelectionList()
     sels.add(node)

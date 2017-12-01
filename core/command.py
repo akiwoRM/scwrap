@@ -8,10 +8,18 @@ from . import utils
 
 
 def ls(*args, **kwds):
+    """override ls command
+    This function returns wrapper objects.
+    """
     res = cmds.ls(*args, **kwds)
     return list() if res is None else [general.wrap(r) for r in res]
 
 def duplicate(*args, **kwds):
+    """override duplicate command
+    - naming not number order, but alphabet order.
+    - all locked attributes are unlocked.
+    - if source has intermediate geometries, delete them.
+    """
     cmpl = re.compile('([0-9]+)$')
     name = utils.get_opt(kwds, ('n', 'name'), None)
 

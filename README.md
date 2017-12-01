@@ -3,7 +3,8 @@ Cheap nodewrapper for maya
 
 This script is for studying python class system.
 
-developed by iPhone(almost)
+Developed by iPhone(almost)
+No debug (almost)
 
 ```python
 # ex.)

@@ -64,7 +64,10 @@ class Base(unicode):
         return [func(node) for node in self.connections(self, **kwds)]
 
     def history(self, **kwds):
+        nType = utils.get_opt(kwds, ("type", "t"), None)
         ret = cmds.listHistory(self, **kwds)
+        if nType is not None:
+            ret = [node for node in ret if cmds.nodeType(node) == nType]
         return list() if ret is None else [wrap(node) for node in ret]
 
 
@@ -84,6 +87,8 @@ class Attribute(Base):
         return super(Attribute, cls).__new__(cls, cls._node + "." + cls._attr)
 
     def __getitem__(self, idx):
+        """Access to multi attribute
+        """
         return Attribute(self._node, self._attr + '[{0}]'.format(idx))
 
     def __rshift__(self, other):
@@ -128,7 +133,7 @@ class Node(Base):
         return cmds.nodeType(self, **kwds)
 
     def rename(self, name):
-        return Node(cmds.rename(self, name))
+        return wrap(cmds.rename(self, name))
 
 
 class DAGNode(Node):
@@ -251,12 +256,12 @@ class Transform(DAGNode):
         else:
             cmds.parent(par, w=1)
         cmds.parent(self, par)
-        return par
+        return Transform(par)
 
 
 def wrap(node):
     """wrapper function
-    return appropriate wrapper object from source node.
+    This function returns appropriate wrapper object from source node.
     """
     sels = OpenMaya.MSelectionList()
     sels.add(node)

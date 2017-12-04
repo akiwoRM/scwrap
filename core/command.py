@@ -10,6 +10,7 @@ from . import utils
 def ls(*args, **kwds):
     """override ls command
     This function returns wrapper objects.
+    if return is None, it returns null list.
     """
     res = cmds.ls(*args, **kwds)
     return list() if res is None else [general.wrap(r) for r in res]

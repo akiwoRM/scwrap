@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from maya import cmds
 from maya.api import OpenMaya
+from . import utils
 
 try:
     import unicode
@@ -64,10 +65,18 @@ class Base(unicode):
         return [func(node) for node in self.connections(self, **kwds)]
 
     def history(self, **kwds):
+        """override listHistory command
+        add type option
+        """
         nType = utils.get_opt(kwds, ("type", "t"), None)
+        kwds.pop("type", None)
+        kwds.pop("t", None)
+
         ret = cmds.listHistory(self, **kwds)
+
         if nType is not None:
             ret = [node for node in ret if cmds.nodeType(node) == nType]
+
         return list() if ret is None else [wrap(node) for node in ret]
 
 

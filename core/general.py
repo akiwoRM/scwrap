@@ -156,15 +156,15 @@ class DAGNode(Node):
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
 
-    def _relatives(self, *args, **kwds):
+    def relatives(self, *args, **kwds):
         ret = cmds.listRelatives(*args, **kwds)
         return list() if ret is None else ret
 
     def getParent(self):
-        return DAGNode(self._relatives(self, p=1))
+        return DAGNode(self.relatives(self, p=1))
 
     def getShape(self):
-        return [DAGNode(node) for node in self._relatives(self, s=1)]
+        return [DAGNode(node) for node in self.relatives(self, s=1)]
 
     def getDagPath(self):
         sels = OpenMaya.MSelectionList()

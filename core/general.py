@@ -137,6 +137,7 @@ class Node(Base):
 
     def addAttr(self, attr, **kwds):
         cmds.addAttr(self, ln=attr, **kwds)
+        return Attribute(self, attr)
 
     def type(self, **kwds):
         return cmds.nodeType(self, **kwds)
@@ -160,8 +161,11 @@ class DAGNode(Node):
         ret = cmds.listRelatives(*args, **kwds)
         return list() if ret is None else ret
 
-    def getParent(self):
-        return DAGNode(self.relatives(self, p=1))
+    def getParent(self, num=1):
+        ret = self
+        for i in range(num):
+            ret = DAGNode(self.relatives(ret, p=1))
+        return ret
 
     def getShape(self):
         return [DAGNode(node) for node in self.relatives(self, s=1)]

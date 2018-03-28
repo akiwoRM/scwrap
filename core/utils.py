@@ -20,3 +20,7 @@ def get_opt(kwds, keys, init_val):
 
 def get_abc(num):
     return string.ascii_uppercase[num]
+
+
+def pascal_case(name):
+    return name[0].upper() + name[1:]

@@ -281,8 +281,12 @@ def wrap(node):
     try:
         dag = sels.getDagPath(0)
         if dag.apiType() == getattr(OpenMaya.MFn, 'kTransform'):
-            return Transform(node)
-        return DAGNode(node)
+            base_class = Transform
+        else:
+            base_class = DAGNode
+        nodeType = cmds.objExists(node)
+        wrap_class = type(utils.pascal_case(nodeType), (base_class,), dict(nodeType=nodeType))
+        return wrap_class(node)
     except:
         pass
     return Node(node)

@@ -10,8 +10,8 @@ No debug (almost)
 # ex.)
 import scwrap.core as sc
 
-sc.cmds.select('pSphere1')
-sc.cmds.select('pCube1', add=1)
+sc.select('pSphere1')
+sc.select('pCube1', add=1)
 sph = sc.ls(sl=1)[0]
 cube = sc.ls(sl=1)[1]
 sph.tx.get()

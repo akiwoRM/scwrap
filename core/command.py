@@ -6,6 +6,8 @@ import string
 from . import general
 from . import utils
 
+from maya.cmds import *
+
 
 def ls(*args, **kwds):
     """override ls command

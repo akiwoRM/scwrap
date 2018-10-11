@@ -24,3 +24,7 @@ def get_abc(num):
 
 def pascal_case(name):
     return name[0].upper() + name[1:]
+
+
+def camel_case(name):
+    return name[0].lower() + name[1:]

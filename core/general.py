@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from maya import cmds
 from maya.api import OpenMaya
+import string
 from . import utils
 
 try:
@@ -145,6 +146,26 @@ class Node(Base):
     def rename(self, name):
         return wrap(cmds.rename(self, name))
 
+    def create(self, **kwds):
+        name = self
+        if name.exists():
+            for c in string.ascii_uppercase:
+                n = name + c
+                if not n.exists():
+                    name = n
+                    break
+        
+        node = cmds.createNode(self.__class__.nodeType, n=name)
+        """locator等のshape系のノードの場合、親transformノードを指定の名前に変更
+        """
+        if cmds.objectType(node, isa="geometryShape"):
+
+            node = cmds.rename(node, node.replace("Shape", "") + "Shape")
+            node = cmds.listRelatives(node, p=1)[0]
+            node = cmds.rename(node, name.replace("Shape", ""))
+
+        return self.__class__(node)
+
 
 class DAGNode(Node):
     """
@@ -179,6 +200,7 @@ class DAGNode(Node):
 class Transform(DAGNode):
     """Transform class
     """
+    nodeType = "transform"
     spaceDict = {
         'world': 'ws', 
         'object': 'os'

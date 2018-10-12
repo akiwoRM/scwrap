@@ -121,6 +121,15 @@ class Node(Base):
     """
     DependNode wrapper class
     """
+    attr_opt = {}
+    def __new__(cls, name="", **attr):
+        if name == "":
+            name = cls.nodeType
+        return super(Node, cls).__new__(name)
+
+    def __init__(self, name="", **attr):
+        self.attr_opt = attr
+
     def __getattr__(self, attr):
         return Attribute(self, attr)
 
@@ -147,6 +156,9 @@ class Node(Base):
         return wrap(cmds.rename(self, name))
 
     def create(self, **kwds):
+        """ユニークネームを取得する。
+        後で別関数として切り出す
+        """
         name = self
         if name.exists():
             for c in string.ascii_uppercase:
@@ -163,6 +175,12 @@ class Node(Base):
             node = cmds.rename(node, node.replace("Shape", "") + "Shape")
             node = cmds.listRelatives(node, p=1)[0]
             node = cmds.rename(node, name.replace("Shape", ""))
+        
+        # setAttr process by attr_opt
+        if "set" in self.attr_opt.keys():
+            for attr, val in self.attr_opt["set"].items():
+                # __setattr__と重複するので、後で別関数として切り出す
+                cmds.setAttr(node + "." + attr, val)
 
         return self.__class__(node)
 

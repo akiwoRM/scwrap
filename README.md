@@ -41,8 +41,9 @@ cube.matchTransform(sph)
 sph.freeze()
 sph_par = sph.addParentNode(n=sph + '_par')
 
-trs_obj = sc.node.Transform("trs")
+trs_obj = sc.node.Transform("trs", set={"ty": 1})
 for i in range(3):
+    trs_obj.attr_opt["tx"] = i
     trs_obj.create()
 
 ```

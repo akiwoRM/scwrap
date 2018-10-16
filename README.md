@@ -46,4 +46,7 @@ for i in range(3):
     trs_obj.attr_opt["tx"] = i
     trs_obj.create()
 
+trsA_obj = sc.node.Transform("ctl", add=[{"ln": "display", "at": "enum", "en": "Hide:Show", "k": 1}])
+trsA_obj.create()
+
 ```

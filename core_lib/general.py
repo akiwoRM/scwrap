@@ -188,6 +188,14 @@ class Node(Base):
             node = cmds.listRelatives(node, p=1)[0]
             node = cmds.rename(node, name.replace("Shape", ""))
         
+        # addAttr process by attr_opt
+        if "add" in self.attr_opt.keys():
+            add_lst = self.attr_opt["add"]
+            if not isinstance(add_lst, (list, tuple)):
+                add_lst = [add_lst]
+            for add_opt in add_lst:
+                cmds.addAttr(node, **add_opt)
+
         # setAttr process by attr_opt
         if "set" in self.attr_opt.keys():
             for attr, val in self.attr_opt["set"].items():

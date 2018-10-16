@@ -99,12 +99,17 @@ class Attribute(Base):
     _attr = ''
 
     def __new__(cls, *args, **kwds):
-        if len(args) == 2:
-            cls._node = args[0]
-            cls._attr = args[1]
+        ret = args[0]
+        if len(args) > 1:
+            ret = ".".join(args)
+       return super(Attribute, cls).__new__(cls, ret)
+
+    def __init__(self, *args, **kwds):
+        if len(args) > 1:
+            self._node = args[0]
+            self._attr = ".".join(args[1:])
         elif len(args) == 1:
-            cls._node, cls._attr = args[0].split('.')
-        return super(Attribute, cls).__new__(cls, cls._node + "." + cls._attr)
+            self._node, self._attr = args[0].split('.')
 
     def __getitem__(self, idx):
         """Access to multi attribute

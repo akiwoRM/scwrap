@@ -80,6 +80,16 @@ class Base(unicode):
 
         return list() if ret is None else [wrap(node) for node in ret]
 
+    def _setAttr(self, attr, *val, **opt):
+        """型を判別して引数を追加する
+        """
+        try:
+            cmds.setAttr(attr, *val, **opt)
+        except:
+            if isinstance(val[0], (str, unicode)):
+               opt["type"] = "string"
+            cmds.setAttr(attr, val[0], **opt)
+
 
 class Attribute(Base):
     """
@@ -114,7 +124,7 @@ class Attribute(Base):
         return cmds.getAttr(self, **kwds)
 
     def set(self, *val, **kwds):
-        cmds.setAttr(self, *val, **kwds)
+        self._setAttr(str(self), *val, **kwds)
     
 
 class Node(Base):
@@ -134,10 +144,7 @@ class Node(Base):
         return Attribute(self, attr)
 
     def __setattr__(self, attr, val):
-        try:
-            cmds.setAttr(self + "." + attr, val)
-        except:
-            cmds.setAttr(self + "." + attr, *val)
+        self._setAttr(str(self) + "." + attr, val)
 
     def attr(self, attr):
         return Attribute(self, attr)
@@ -179,8 +186,7 @@ class Node(Base):
         # setAttr process by attr_opt
         if "set" in self.attr_opt.keys():
             for attr, val in self.attr_opt["set"].items():
-                # __setattr__と重複するので、後で別関数として切り出す
-                cmds.setAttr(node + "." + attr, val)
+                self._setAttr(node + "." + attr, val)
 
         return self.__class__(node)
 

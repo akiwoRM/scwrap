@@ -3,6 +3,7 @@ from maya import cmds
 from maya.api import OpenMaya
 import string
 from . import utils
+from . import naming
 
 try:
     import unicode
@@ -169,15 +170,8 @@ class Node(Base):
 
     def create(self, **kwds):
         """ユニークネームを取得する。
-        後で別関数として切り出す
         """
-        name = self
-        if name.exists():
-            for c in string.ascii_uppercase:
-                n = name + c
-                if not n.exists():
-                    name = n
-                    break
+        name = naming.n_(str(self))
         
         node = cmds.createNode(self.__class__.nodeType, n=name)
         """locator等のshape系のノードの場合、親transformノードを指定の名前に変更

@@ -17,6 +17,27 @@ def ls(*args, **kwds):
     res = cmds.ls(*args, **kwds)
     return list() if res is None else [general.wrap(r) for r in res]
 
+
+def deleteNode(*args, **kwds):
+    """custom delete command
+    This function is deleted node even if not exist node, skip delete .
+    """
+    nodes = args
+    if len(args) < 1:
+        nodes = cmds.ls(sl=1)
+    
+    for node in nodes:
+        node_lst = [node]
+        if isinstance(node, (list, tuple)):
+            node_lst = node
+
+        for n in node_lst:
+            if cmds.objExists(n):
+                cmds.delete(n, **kwds)
+            else:
+                cmds.warning("Don’t exists - " + node)
+
+
 def duplicate(*args, **kwds):
     """override duplicate command
     - naming not number order, but alphabet order.

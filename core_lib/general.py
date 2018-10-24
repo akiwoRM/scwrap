@@ -150,7 +150,10 @@ class Node(Base):
         return Attribute(self, attr)
 
     def __setattr__(self, attr, val):
-        self._setAttr(str(self) + "." + attr, val)
+        try:
+            getattr(self, attr)
+        except:
+            self._setAttr(str(self) + "." + attr, val)
 
     def attr(self, attr):
         return Attribute(self, attr)

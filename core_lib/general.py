@@ -41,7 +41,7 @@ class Base(unicode):
         kwds['destination'] = 0
 
         return [func(node) for node in self.connections(self, **kwds)]
-    
+
     def outputs(self, **kwds):
         """override listConnection command fixed only destination argument setting.
 
@@ -88,7 +88,7 @@ class Base(unicode):
             cmds.setAttr(attr, *val, **opt)
         except:
             if isinstance(val[0], (str, unicode)):
-               opt["type"] = "string"
+                opt["type"] = "string"
             cmds.setAttr(attr, val[0], **opt)
 
 
@@ -103,7 +103,7 @@ class Attribute(Base):
         ret = args[0]
         if len(args) > 1:
             ret = ".".join(args)
-       return super(Attribute, cls).__new__(cls, ret)
+        return super(Attribute, cls).__new__(cls, ret)
 
     def __init__(self, *args, **kwds):
         if len(args) > 1:

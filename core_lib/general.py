@@ -141,7 +141,7 @@ class Node(Base):
     def __new__(cls, name="", **attr):
         if name == "":
             name = cls.nodeType
-        return super(Node, cls).__new__(name)
+        return super(Node, cls).__new__(cls, name)
 
     def __init__(self, name="", **attr):
         self.attr_opt = attr

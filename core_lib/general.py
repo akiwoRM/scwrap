@@ -15,7 +15,7 @@ class Base(unicode):
     """Base class for Node class and Attribute class. This class has common methods like connection.
     """
     def __repr__(self):
-        return “{}(‘{}’)”.format(self.__class__.__name__, self)
+        return "{}('{}')".format(self.__class__.__name__, self)
 
     def connections(self, *args, **kwds):
         ret = cmds.listConnections(*args, **kwds)

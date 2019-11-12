@@ -343,8 +343,9 @@ def wrap(node):
             base_class = Transform
         else:
             base_class = DAGNode
-        nodeType = cmds.objExists(node)
-        wrap_class = type(utils.pascal_case(nodeType), (base_class,), dict(nodeType=nodeType))
+        cur_nodeType = cmds.nodeType(str(node))
+        wrap_class = global()[utils.pascal_case(cur_nodeType)]
+        # wrap_class = type(utils.pascal_case(nodeType), (base_class,), dict(nodeType=nodeType))
         return wrap_class(node)
     except:
         pass

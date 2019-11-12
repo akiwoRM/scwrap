@@ -84,6 +84,11 @@ class Base(unicode):
 
         return list() if ret is None else [wrap(node) for node in ret]
 
+    def _mobject(self):
+        sels = OpenMaya.MSelectionList()
+        sels.add(self)
+        return sels.getDependNode(0)
+
     def _setAttr(self, attr, *val, **opt):
         """型を判別して引数を追加する
         """
@@ -212,6 +217,11 @@ class DAGNode(Node):
     def __or__(self, other):
         cmds.parent(other, self)
 
+    def _mdagpath(self):
+        sels = OpenMaya.MSelectionList()
+        sels.add(self)
+        return sels.getDagPath(0)
+
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
 
@@ -242,6 +252,10 @@ class Transform(DAGNode):
         'world': 'ws', 
         'object': 'os'
     }
+
+    def _mfntrs(self):
+        dag = self._mdagpath()
+        return OpenMaya.MFnTransform(dag)
 
     def freeze(self, **kwds):
         if kwds == {}:

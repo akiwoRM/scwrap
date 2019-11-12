@@ -2,6 +2,7 @@
 from maya import cmds
 from maya.api import OpenMaya
 import string
+import math
 from . import utils
 from . import naming
 
@@ -252,6 +253,10 @@ class Transform(DAGNode):
         'world': 'ws', 
         'object': 'os'
     }
+    spaceDict_api = {
+        'world': OpenMaya.MSpace.kWorld,
+        'object': OpenMaya.MSpace.kTransform,
+    }
 
     def _mfntrs(self):
         dag = self._mdagpath()
@@ -266,11 +271,13 @@ class Transform(DAGNode):
         # delete history
         cmds.delete(self, ch=1)
 
-    def getTranslation(self, space='world'):
-        opt = {'q': 1, 't': 1}
-        opt[self.spaceDict[space]] = 1
-        return cmds.xform(self, **opt)
-        
+    def getTranslation(self, space='world', asMVector=False):
+        trsFn = self._mfntrs()
+        ret = trsFn.translation(self.spaceDict_api[space])
+        if not asMVector;
+            ret = list(ret)
+        return ret
+      
     def setTranslation(self, args, space='world'):
         opt = {self.spaceDict[space]: 1}
         if len(args) > 1:

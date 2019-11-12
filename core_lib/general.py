@@ -352,22 +352,35 @@ class Transform(DAGNode):
         return Transform(par)
 
 
-def wrap(node):
+def wrap(*nodes):
     """wrapper function
     This function returns appropriate wrapper object from source node.
     """
-    sels = OpenMaya.MSelectionList()
-    sels.add(node)
-    try:
-        dag = sels.getDagPath(0)
-        if dag.apiType() == getattr(OpenMaya.MFn, 'kTransform'):
-            base_class = Transform
-        else:
-            base_class = DAGNode
-        cur_nodeType = cmds.nodeType(str(node))
-        wrap_class = globals()[utils.pascal_case(cur_nodeType)]
-        # wrap_class = type(utils.pascal_case(nodeType), (base_class,), dict(nodeType=nodeType))
-        return wrap_class(node)
-    except:
-        pass
-    return Node(node)
+
+    nodes_list = nodes
+    if len(nodes) == 1:
+        if isinstance(nodes[0], (list, tuple)):
+            nodes_list = nodes[0]
+
+    ret = []
+    for i, node in enumerate(nodes_list):
+        sels = OpenMaya.MSelectionList()
+        sels.add(node)
+        try:
+            dag = sels.getDagPath(0)
+            if dag.apiType() == getattr(OpenMaya.MFn, 'kTransform'):
+                base_class = Transform
+            else:
+                base_class = DAGNode
+            cur_nodeType = cmds.nodeType(str(node))
+            wrap_class = globals()[utils.pascal_case(cur_nodeType)]
+            # wrap_class = type(utils.pascal_case(nodeType), (base_class,), dict(nodeType=nodeType))
+            w_node = wrap_class(node)
+        except:
+            w_node = Node(node)
+        ret.append(w_node)
+
+    if i == 0:
+        ret = ret[0]
+
+    return ret

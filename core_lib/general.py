@@ -153,7 +153,7 @@ class Node(Base):
         return super(Node, cls).__new__(cls, name)
 
     def __init__(self, name="", **attr):
-        self.attr_opt = attr
+        self.__dict__["attr_opt"] = attr
 
     def __getattr__(self, attr):
         return Attribute(self, attr)

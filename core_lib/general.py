@@ -233,8 +233,10 @@ class DAGNode(Node):
     def getParent(self, num=1):
         ret = self
         for i in range(num):
-            ret = DAGNode(self.relatives(ret, p=1)[0])
-        return None if ret is None else wrap(ret)
+            ret = self.relatives(ret, p=1)
+            if ret == []:
+                break
+        return [] if ret == [] else wrap(ret[0])
 
     def getShape(self):
         return [DAGNode(node) for node in self.relatives(self, s=1)]

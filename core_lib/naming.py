@@ -11,7 +11,7 @@ from . import utils
 namingRule = "{name}{sq}"
 
 
-def n_(name, *args, **opt):
+def n_(name, **opt):
     """
     Args:
         name(string): basic name
@@ -32,7 +32,7 @@ def n_(name, *args, **opt):
     ns = utils.get_opt(opt, ["namespace", "ns"], "")
 
     ret = name
-    f_name = namingRule.format(name=name)
+    f_name = namingRule.format(name=name, sq="{sq}")
     if name.find("#") > -1:
         f_name = name.replace("#", "{sq}")
 

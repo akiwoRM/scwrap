@@ -274,7 +274,7 @@ class Transform(DAGNode):
     def getTranslation(self, space='world', asMVector=False):
         trsFn = self._mfntrs()
         ret = trsFn.translation(self.spaceDict_api[space])
-        if not asMVector;
+        if not asMVector:
             ret = list(ret)
         return ret
       

@@ -348,12 +348,15 @@ class Transform(DAGNode):
         except:
             raise TypeError,'Don’t exists nodeType:' + nType
 
-        cmds.parent(self, par, r=1)
+        # cmds.parent(self, par, r=1)
         cur_par = self.getParent()
         if cur_par:
             cmds.parent(par, cur_par)
         else:
-            cmds.parent(par, w=1)
+            try:
+                cmds.parent(par, w=1)
+            except:
+                pass
         cmds.parent(self, par)
         return Transform(par)
 

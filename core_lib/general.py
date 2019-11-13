@@ -233,8 +233,8 @@ class DAGNode(Node):
     def getParent(self, num=1):
         ret = self
         for i in range(num):
-            ret = DAGNode(self.relatives(ret, p=1))
-        return ret
+            ret = DAGNode(self.relatives(ret, p=1)[0])
+        return None if ret is None else wrap(ret)
 
     def getShape(self):
         return [DAGNode(node) for node in self.relatives(self, s=1)]
@@ -278,7 +278,8 @@ class Transform(DAGNode):
             ret = list(ret)
         return ret
       
-    def setTranslation(self, args, space='world'):
+    def setTranslation(self, *args, **kwds):
+        space = utils.get_opt(kwds, ["space", "s"], "world")
         opt = {self.spaceDict[space]: 1}
         if len(args) > 1:
             opt['t'] = args
@@ -292,7 +293,8 @@ class Transform(DAGNode):
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
 
-    def setRotation(self, args, space='world'):
+    def setRotation(self, *args, **kwds):
+        space = utils.get_opt(kwds, ["space", "s"], "world")
         opt = {self.spaceDict[space]: 1}
         if len(args) > 1:
             opt['ro'] = args
@@ -306,7 +308,8 @@ class Transform(DAGNode):
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)
 
-    def setScale(self, args, space='world'):
+    def setScale(self, *args, **kwds):
+        space = utils.get_opt(kwds, ["space", "s"], "world")
         opt = {self.spaceDict[space]: 1}
         if len(args) > 1:
             opt['s'] = args
@@ -315,7 +318,8 @@ class Transform(DAGNode):
                 opt['s'] = args[0]
         cmds.xform(self, **opt)
 
-    def matchTransform(self, args, attrs=['t', 'r', 's']):
+    def matchTransform(self, *args, **kwds):
+        attrs = utils.get_opt(kwds, ["attrs", "ats"], ['t', 'r', 's'])
         attr_io = {
             't': {
                 'get': lambda x: x.getTranslation(),

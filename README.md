@@ -57,6 +57,7 @@ for i in range(3):
 trsA_obj = sc.node.Transform("ctl", add=[{"ln": "display", "at": "enum", "en": "Hide:Show", "k": 1}])
 trsA_obj.create()
 
-sc.deleteNode(trsA_obj, "trsB_obj”)
+sc.deleteNode(trsA_obj, "trsB_obj")
+# Don’t exist - trsB_obj
 
 ```

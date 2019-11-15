@@ -38,7 +38,7 @@ def deleteNode(*args, **kwds):
             if cmds.objExists(str(n)):
                 cmds.delete(str(n), **kwds)
             else:
-                cmds.warning("Don’t exists - " + node)
+                cmds.warning("# Don’t exist - " + node)
 
 
 def duplicate(*args, **kwds):

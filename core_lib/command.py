@@ -68,13 +68,17 @@ def duplicate(*args, **kwds):
                 dup = cmds.rename(dup, cmpl.sub(rep_alp , dup))
 
         # unlock attribute
-        for attr in cmds.listAttr(dup, l=1, k=1):
-            cmds.setAttr(dup + '.' + attr, l=0)
+        attrs = cmds.listAttr(dup, l=1, k=1)
+        if attrs:
+            for attr in atrs:
+                cmds.setAttr(dup + '.' + attr, l=0)
 
         # delete intermediate shape
-        for shp in cmds.listRelatives(dup, s=1):
-            if cmds.getAttr(shp + '.io'):
-                cmds.delete(shp)
+        shps = cmds.listRelatives(dup, s=1)
+        if shps:
+            for shp in shps:
+                if cmds.getAttr(shp + '.io'):
+                    cmds.delete(shp)
         rets.append(general.wrap(dup))
     
     return rets

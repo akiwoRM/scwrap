@@ -19,6 +19,8 @@ class Base(unicode):
         return "{}('{}')".format(self.__class__.__name__, self)
 
     def connections(self, *args, **kwds):
+        """override connection method.
+        """
         ret = cmds.listConnections(*args, **kwds)
         return list() if ret is None else ret
 
@@ -178,7 +180,7 @@ class Node(Base):
         return cmds.nodeType(self, **kwds)
 
     def rename(self, name):
-        return wrap(cmds.rename(self, name))
+        return wrap(cmds.rename(str(self), name))
 
     def create(self, **kwds):
         """ユニークネームを取得する。

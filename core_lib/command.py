@@ -7,7 +7,10 @@ from . import general
 from . import utils
 
 from maya.cmds import *
-
+""" 全てのcmdsコマンドを展開して
+scwrap.commandモジュール上から呼び出す。
+下記コマンドはオーバーライドされる。
+"""
 
 def ls(*args, **kwds):
     """override ls command
@@ -32,8 +35,8 @@ def deleteNode(*args, **kwds):
             node_lst = node
 
         for n in node_lst:
-            if cmds.objExists(n):
-                cmds.delete(n, **kwds)
+            if cmds.objExists(str(n)):
+                cmds.delete(str(n), **kwds)
             else:
                 cmds.warning("Don’t exists - " + node)
 

@@ -22,7 +22,7 @@ class Base(unicode):
         sels = OpenMaya.MSelectionList()
         sels.add(self)
         return sels.getDependNode(0)
-    
+
     def _mfn(self):
         return OpenMaya.MFnBase(self._mobject())
 
@@ -131,8 +131,8 @@ class Attribute(Base):
                 self._mplug = args[0]
                 self._node, self._attr = self._mplug.name()
             else:
-            self._node = args[0]
-            self._attr = ".".join(args[1:])
+                self._node = args[0]
+                self._attr = ".".join(args[1:])
                 self._mplug = self.get_mplug(".".join(args))
         elif len(args) == 1:
             self._node, self._attr = args[0].split('.')
@@ -157,7 +157,7 @@ class Attribute(Base):
 
     def __floordiv__(self, other):
         cmds.disconnectAttr(self, other)
-
+ 
     def get_mplug(self, name):
         sels = OpenMaya.MSelectionList()
         sels.add(name)
@@ -210,7 +210,7 @@ class Node(Base):
             getattr(self, attr)
         except:
             self._setAttr(str(self) + "." + attr, val)
-    
+
     def _mfn(self):
         return OpenMaya.MFnDependencyNode(self._mobject())
 
@@ -272,7 +272,7 @@ class DAGNode(Node):
         sels = OpenMaya.MSelectionList()
         sels.add(self)
         return sels.getDagPath(0)
-
+    
     def _mfn(self):
         return OpenMaya.MFnDagNode(self._mdagpath())
 
@@ -338,7 +338,18 @@ class Transform(DAGNode):
                 opt['t'] = args[0]
         cmds.xform(self, **opt)
 
-    def getRotation(self, space='world'):
+    def getRotation(self, space='world', asQuaternion=False):
+        trsFn = self._mfn()
+        quat = trsFn.rotation(self.spaceDict_api[space], asQuaternion=1)
+
+        if asQuaternion:
+            return quat
+
+        eul = quat.asEulerRotation()
+        eul.reorderIt(trsFn.rotationOrder() - 1)
+        ret = [math.degrees(v) for v in [eul.x, eul.y, eul.z]]
+        return ret
+
         opt = {'q': 1, 'ro': 1}
         opt[self.spaceDict[space]] = 1
         return cmds.xform(self, **opt)

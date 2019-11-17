@@ -24,7 +24,7 @@ class Base(unicode):
         return sels.getDependNode(0)
     
     def _mfn(self):
-        return OpenMaya.MFnBase(self._mobject)
+        return OpenMaya.MFnBase(self._mobject())
 
     def connections(self, *args, **kwds):
         """override connection method.
@@ -152,6 +152,7 @@ class Node(Base):
     DependNode wrapper class
     """
     attr_opt = {}
+
     def __new__(cls, name="", **attr):
         if name == "":
             name = cls.nodeType
@@ -170,7 +171,7 @@ class Node(Base):
             self._setAttr(str(self) + "." + attr, val)
     
     def _mfn(self):
-        return OpenMaya.MFnDependencyNode(self._mobject)
+        return OpenMaya.MFnDependencyNode(self._mobject())
 
     def attr(self, attr):
         return Attribute(self, attr)
@@ -231,6 +232,9 @@ class DAGNode(Node):
         sels.add(self)
         return sels.getDagPath(0)
 
+    def _mfn(self):
+        return OpenMaya.MFnDagNode(self._mdagpath())
+
     def parent(self, *args, **kwds):
         cmds.parent(self, *args, **kwds)
 
@@ -268,7 +272,7 @@ class Transform(DAGNode):
         'object': OpenMaya.MSpace.kTransform,
     }
 
-    def _mfntrs(self):
+    def _mfn(self):
         dag = self._mdagpath()
         return OpenMaya.MFnTransform(dag)
 
@@ -282,7 +286,7 @@ class Transform(DAGNode):
         cmds.delete(self, ch=1)
 
     def getTranslation(self, space='world', asMVector=False):
-        trsFn = self._mfntrs()
+        trsFn = self._mfn()
         ret = trsFn.translation(self.spaceDict_api[space])
         if not asMVector:
             ret = list(ret)

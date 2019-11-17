@@ -294,11 +294,6 @@ class DAGNode(Node):
     def getShape(self):
         return [DAGNode(node) for node in self.relatives(self, s=1)]
 
-    def getDagPath(self):
-        sels = OpenMaya.MSelectionList()
-        sels.add(self)
-        return sels.getDagPath(0)
-
 
 class Transform(DAGNode):
     """Transform class
@@ -429,7 +424,7 @@ def wrap(*nodes):
         sels = OpenMaya.MSelectionList()
         sels.add(node)
         try:
-            dag = sels.getDagPath(0)
+            dag = sels._mdagpath()
             if dag.apiType() == getattr(OpenMaya.MFn, 'kTransform'):
                 base_class = Transform
             else:

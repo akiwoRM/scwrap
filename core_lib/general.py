@@ -18,6 +18,14 @@ class Base(unicode):
     def __repr__(self):
         return "{}('{}')".format(self.__class__.__name__, self)
 
+    def _mobject(self):
+        sels = OpenMaya.MSelectionList()
+        sels.add(self)
+        return sels.getDependNode(0)
+    
+    def _mfn(self):
+        return OpenMaya.MFnBase(self._mobject)
+
     def connections(self, *args, **kwds):
         """override connection method.
         """
@@ -86,11 +94,6 @@ class Base(unicode):
             ret = [node for node in ret if cmds.nodeType(node) == nType]
 
         return list() if ret is None else [wrap(node) for node in ret]
-
-    def _mobject(self):
-        sels = OpenMaya.MSelectionList()
-        sels.add(self)
-        return sels.getDependNode(0)
 
     def _setAttr(self, attr, *val, **opt):
         """型を判別して引数を追加する
@@ -165,6 +168,9 @@ class Node(Base):
             getattr(self, attr)
         except:
             self._setAttr(str(self) + "." + attr, val)
+    
+    def _mfn(self):
+        return OpenMaya.MFnDependencyNode(self._mobject)
 
     def attr(self, attr):
         return Attribute(self, attr)

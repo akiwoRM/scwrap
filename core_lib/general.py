@@ -113,6 +113,12 @@ class Attribute(Base):
     _node = ''
     _attr = ''
 
+    attrType_dict = {
+        "doubleLinear": "Double",
+        "doubleAngle":  "MAngle",
+        "bool":  "Int",
+    }
+
     def __new__(cls, *args, **kwds):
         ret = args[0]
         if len(args) > 1:
@@ -121,10 +127,22 @@ class Attribute(Base):
 
     def __init__(self, *args, **kwds):
         if len(args) > 1:
+            if isinstance(args[0], OpenMaya.MPlug):
+                self._mplug = args[0]
+                self._node, self._attr = self._mplug.name()
+            else:
             self._node = args[0]
             self._attr = ".".join(args[1:])
+                self._mplug = self.get_mplug(".".join(args))
         elif len(args) == 1:
             self._node, self._attr = args[0].split('.')
+            self._mplug = self.get_mplug(args[0])
+        
+        if self._mplug:
+            self.m_type = cmds.getAttr(self._mplug.name(), type=1)
+            self.is_compound = self._mplug.isCompound
+            if self.is_compound:
+                self._numChild = self._mplug.numChildren()
 
     def __getitem__(self, idx):
         """Access to multi attribute
@@ -140,8 +158,31 @@ class Attribute(Base):
     def __floordiv__(self, other):
         cmds.disconnectAttr(self, other)
 
+    def get_mplug(self, name):
+        sels = OpenMaya.MSelectionList()
+        sels.add(name)
+
+        try:
+            ret = sels.getPlug(0)
+        except:
+            ret = None
+        return ret
+
     def get(self, **kwds):
-        return cmds.getAttr(self, **kwds)
+        vals = []
+        if self.is_compound:
+            for i in range(self._numChild):
+                ch_plg = self._mplug.child(i)
+                v = Attribute(ch_plg).get()
+                vals.append(v)
+
+        if vals == []:
+            vals = getattr(self._mplug, "as" + self.attrType_dict[self.m_type])()
+            if self.m_type == 'doubleAngle':
+                vals = vals.asDegrees()
+
+        return vals
+        # return cmds.getAttr(self, **kwds)
 
     def set(self, *val, **kwds):
         self._setAttr(str(self), *val, **kwds)
